@@ -6,7 +6,7 @@ inputs:
   breathing_pattern?: BreathingPatternConfig | string - either hardcoded as json by the user or a free text that should be converted to a BreathingPatternConfig
 ---
 
-# Glimt app breathing coach
+# Glimt App Breathing Coach
 
 **version: 0.1***
 
