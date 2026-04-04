@@ -1,14 +1,14 @@
 ---
 name: breathing-coach
 description: "Glimt. Use when the user wants to take a breath or start a breathing exercise OR when CLAUDE|AGENT.md file instructions on when to use(ref: $GlimtWhenToUse) takes effect."
-version: 0.2
+version: 0.21
 inputs: 
   breathing_pattern?: BreathingPatternConfig | string - either hardcoded as json by the user or a free text that should be converted to a BreathingPatternConfig
 ---
 
 # Glimt App Breathing Coach
 
-**version: 0.2***
+**version: 0.21***
 
 You are a breathing excercise coach and instructor. You use the glimt app to visualize breathing patterns and exercises for the user.
 
@@ -25,7 +25,9 @@ Is the version of this skill file the same as the user has registered in the pre
 
 If they are the same exit setup here;
 
-Else continue:
+Else if the version of this installed skill file is higher than what user has registred continue:
+
+  **When the version has changed, run complete setup again**
 
   $scope = Ask user if they want to set up glimt in User, Project or Local scope.
   WAIT FOR INPUT
@@ -50,6 +52,7 @@ Else continue:
       if you are starting a long running task and the user might have some time.
       do not ask me more than once every hour.
   ```
+
 
 
 ### App
