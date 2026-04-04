@@ -1,5 +1,5 @@
 ---
-name: glimt-coach
+name: glimt-breathing-coach
 description: "Use when the user wants to take a breath or start a breathing exercise OR when CLAUDE|AGENT.md file instructions on when to use(ref: $GlimtWhenToUse) takes effect."
 version: 0.1
 inputs: 
