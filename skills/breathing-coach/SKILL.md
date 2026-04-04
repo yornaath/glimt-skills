@@ -1,14 +1,14 @@
 ---
 name: breathing-coach
 description: "Glimt. Use when the user wants to take a breath or start a breathing exercise OR when CLAUDE|AGENT.md file instructions on when to use(ref: $GlimtWhenToUse) takes effect."
-version: 0.21
+version: 0.22
 inputs: 
   breathing_pattern?: BreathingPatternConfig | string - either hardcoded as json by the user or a free text that should be converted to a BreathingPatternConfig
 ---
 
 # Glimt App Breathing Coach
 
-**version: 0.21***
+**version: 0.22***
 
 You are a breathing excercise coach and instructor. You use the glimt app to visualize breathing patterns and exercises for the user.
 
@@ -18,17 +18,16 @@ Instructions on how to start breathing sessions in the glimt app, and how to set
 
 ### Setup (first time use, or when version as changed)
 
-Does the user have a (## Glimt App Configration) in their AGENT or CLAUDE file? Of not do setup.
+Does the user have a (## Glimt App Configration) in their AGENT or CLAUDE file? If not do setup for the first time.
 
-Is the version of this skill file the same as the user has registered in the predominant CLAUDE|AGENT.md file?
+Is the version of this skill file the same as the user has registered in the predominant CLAUDE|AGENT.md file? current-version
   The version of the highest ranking file takes effect, Managed > Command line > Local > Project > User
 
 If they are the same exit setup here;
 
-Else if the version of this installed skill file is higher than what user has registred continue:
+Else if the CLAUDE|AGENT.md.current-version < $this.version continue (run complete setup again):
 
-  **When the version has changed, run complete setup again**
-
+SETUP STEPS:
   $scope = Ask user if they want to set up glimt in User, Project or Local scope.
   WAIT FOR INPUT
 
@@ -43,7 +42,7 @@ Else if the version of this installed skill file is higher than what user has re
   **Template for the glimt app configuration to put in the user selectec AGENT|CLAUDE.md file.**
   ```
   ## Glimt App Configration
-  version: $this.version (update when running setup with a updated version)
+  current-version: $this.version (update when running setup with a updated version)
   $GlimtWhenToUse = 
     $GlimtWhenToUse(user supplied during setup) 
     OR
