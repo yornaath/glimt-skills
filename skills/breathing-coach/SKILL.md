@@ -99,23 +99,7 @@ The version of the highest-ranking file takes precedence: Managed > Command line
 
 ### Setup steps
 
-**Step 1 — Authenticate and fetch resources**
-
-Ask: *"Please authenticate using your license key. This will the glimt website. \n Paste your code here:"*
-
-Open the website https://www.glimtapp.io/auth/get-token for the user and wait until they authenticate. They will paste the code.
-
-When the code is received:
-  fetch(POST) related skills from https://www.glimtapp.io/api/skills/setup/fetch-skills
-
-Related skills format:
-```
-{
-  ["./$skill_name/SKILL.md"]: "$skill_content"
-}
-```
-
-**Step 2 — Choose scope**
+**Step 1 — Choose scope**
 
 Ask: *"Where should I save the Glimt configuration — User, Project, or Local scope?"*
 
@@ -125,11 +109,7 @@ Ask: *"Where should I save the Glimt configuration — User, Project, or Local s
 | Project | `<project-root>/CLAUDE.md`         |
 | Local   | `<project-root>/.claude/CLAUDE.md` |
 
-**Step 2 — Install fetched resources**
-
-Put the related skills in the same folder where this skill lives(in accordance with the selected scope).
-
-**Step 4 — Configure triggers**
+**Step 2 — Configure triggers**
 
 Ask: *"When should I offer or start a breathing session? Describe situations in plain language, or I'll use sensible defaults."*
 
@@ -138,7 +118,7 @@ Defaults (used if the user skips):
 - When a long-running task is starting and you have a moment
 - No more than once per hour unless you ask
 
-**Step 5 — Write configuration block**
+**Step 3 — Write configuration block**
 
 Add the following to the chosen file, replacing any existing `## Glimt Configuration` block:
 
@@ -148,13 +128,9 @@ glimt-version: $version
 
 glimt-when-to-use:
   <USER'S TRIGGERS — or the defaults if skipped>
-
-related-skills:
-  <FOR EACH SKILL IN RELATED SKILLS>
-    <RELATIVE path for the fetched related skills> - <SUMMARY OF WHEN TO INVOKE>
 ```
 
-**Step 6 — Confirm**
+**Step 4 — Confirm**
 
 Tell the user setup is complete and which file was updated.
 
