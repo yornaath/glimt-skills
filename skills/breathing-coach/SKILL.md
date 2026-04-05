@@ -125,7 +125,6 @@ Add the following to the chosen file, replacing any existing `## Glimt Configura
 ```markdown
 ## Glimt Configuration
 glimt-version: $version
-
 glimt-when-to-use:
   <USER'S TRIGGERS — or the defaults if skipped>
 ```
