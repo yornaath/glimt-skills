@@ -48,6 +48,11 @@ type BreathingPatternConfig = {
   hold_out: number          // seconds (0 = no hold)
   rounds: number
 }
+
+type Notification = {
+  notification_type: "BreathingPrompt"
+  duration: number // seconds
+}
 ```
 
 ### 2. Detect OS and launch
@@ -66,10 +71,10 @@ else
 fi
 
 # URL-encode the JSON pattern and launch
-$OPEN_CMD "glimtapp-io://start-breathing?pattern=${URL_ENCODED_JSON}"
+$OPEN_CMD "glimtapp-io://start-breathing?pattern=${URL_ENCODED_BREATHING_PATTERN_CONFIG_JSON}&notification=${URLENCODED_NOTIFICATION_JSON}"
 ```
 
-Example using the `default` preset:
+Example using the `default` preset: (only use notifications when the breathing sessions are being invoked in the background and not directly by the user or their direct prompt in some way)
 
 ```bash
 open 'glimtapp-io://start-breathing?pattern=%7B%22preset_id%22%3A%22default%22%2C%22countdown_seconds%22%3A7%2C%22inhale%22%3A5%2C%22hold_in%22%3A0%2C%22exhale%22%3A5%2C%22hold_out%22%3A0%2C%22rounds%22%3A4%7D'
