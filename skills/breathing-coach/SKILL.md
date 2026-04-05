@@ -1,107 +1,141 @@
 ---
 name: breathing-coach
-description: "Glimt. Use when the user wants to take a breath or start a breathing exercise OR when CLAUDE|AGENT.md file instructions on when to use(ref: $GlimtWhenToUse) takes effect."
-version: 0.22
-inputs: 
-  breathing_pattern?: BreathingPatternConfig | string - either hardcoded as json by the user or a free text that should be converted to a BreathingPatternConfig
+description: >
+  Glimt breathing coach. Launch a guided breathing session for the user via the Glimt app.
+  ALWAYS use this skill when: the user says they want to take a breath, do a breathing exercise,
+  calm down, or relax; when you detect stress or frustration in the user's messages; when you are
+  about to start a long-running task and the user has a moment to spare; or when the user's
+  configured $GlimtWhenToUse conditions are met (see CLAUDE.md / AGENT.md). Also use proactively
+  — don't wait to be asked. If in doubt, offer a breathing session.
+version: &version 0.23
+inputs:
+  breathing_pattern?: BreathingPatternConfig | string
+  # Either a full BreathingPatternConfig JSON object, or a free-text description like
+  # "box breathing" or "something calming" — convert free text using the presets table below.
 ---
 
-# Glimt App Breathing Coach
+# Glimt Breathing Coach v$version
 
-**version 0.22**
+You are a breathing exercise coach. You launch guided breathing sessions for the user
+using the Glimt app's deep link API.
 
-You are a breathing excercise coach and instructor. You use the glimt app to visualize breathing patterns and exercises for the user.
+---
 
+## Quick Reference
 
-## Instructions
+| Goal              | preset_id    | Inhale | Hold In | Exhale | Hold Out | Rounds |
+|-------------------|--------------|--------|---------|--------|----------|--------|
+| Default / balanced | `default`   | 5      | 0       | 5      | 0        | 4      |
+| Box breathing     | `box`        | 4      | 4       | 4      | 4        | 4      |
+| Calm / 4-7-8      | `calm_478`   | 4      | 7       | 8      | 0        | 4      |
+| Energising        | `energise`   | 6      | 0       | 2      | 0        | 6      |
+| Quick reset (1min)| `quick`      | 4      | 0       | 6      | 0        | 4      |
 
-Instructions on how to start breathing sessions in the glimt app, and how to set it up for the user so the agent can use this skill and call it when appropriate for the user.
+If `breathing_pattern` is a free-text string, pick the closest preset or derive custom values
+from the description. If no input is given, use `default`.
 
+---
 
-### Setup (first time use, or when version as changed)
+## Starting a Session
 
-Does the user have a (## Glimt App Configration) in their AGENT or CLAUDE file? If not do setup for the first time.
-
-Is the version of this skill file the same as the user has registered in the predominant CLAUDE|AGENT.md file? current-version
-  The version of the highest ranking file takes effect, Managed > Command line > Local > Project > User
-
-If they are the same exit setup here;
-
-Else if the CLAUDE|AGENT.md.current-version < $this.version continue (run complete setup again):
-
-SETUP STEPS:
-  $scope = Ask user if they want to set up glimt in User, Project or Local scope.
-  WAIT FOR INPUT
-
-  $GlimtWhenToUse = Ask user under which circumstances they want to start a breathing session. Or use glimt DEFAULTS.
-    (example: when im stuck debugging something hard)
-    (example: when the agent is running a long task)
-    (example: when my wording seem stressed or frustrated)
-  WAIT FOR INPUT
-
-  Register configuration in AGENT|CLAUDE.md file.
-
-  **Template for the glimt app configuration to put in the user selectec AGENT|CLAUDE.md file.**
-  ```
-  ## Glimt App Configration
-  current-version: $this.version (update when running setup with a updated version)
-  $GlimtWhenToUse = 
-    $GlimtWhenToUse(user supplied during setup) 
-    OR
-    Ask me if I want to do a breathing session 
-      if you detect I am being stressed or frustrated with a problem or debuggin.
-      if you are starting a long running task and the user might have some time.
-      do not ask me more than once every hour.
-  ```
-
-
-### App
-
-The glimt app has deep linking enabled and the user or agent can invoke some of its functions by calling its app deep links.
-
-
-#### Start Breathing (invoke the app)
-
-The following type represents a breathing pattern, the app understands this type and it can be passed as json to the start breathing app url to start a breathing session.
+### 1. Build the config
 
 ```ts
 type BreathingPatternConfig = {
-  preset_id: string
-  countdown_seconds: number 
-  inhale: number
-  hold_in: number           
-  exhale: number
-  hold_out: number          
+  preset_id: string         // use a preset name from the table above, or "custom"
+  countdown_seconds: number // lead-in before the session starts (default: 7, use 3 for quick)
+  inhale: number            // seconds
+  hold_in: number           // seconds (0 = no hold)
+  exhale: number            // seconds
+  hold_out: number          // seconds (0 = no hold)
   rounds: number
 }
 ```
 
-Default pattern(when not instructed otherwise):
-```json
-{
-  "preset_id": string
-  "countdown_seconds": 7 
-  "inhale": 5
-  "hold_in": 0           
-  "exhale": 5
-  "hold_out": 0          
-  "rounds": 4
-}
-```
-
-open-link-cmd = 
-  osx: open
-  windows: start
-  linux: xdg-open
-
-Url template for invoking a breathing session.
+### 2. Detect OS and launch
 
 ```bash
-open-link-cmd 'glimtapp-io://start-breathing?pattern=${URL_ENCODED(BreathingPatternConfig)}'
+# Detect OS
+OS=$(uname -s 2>/dev/null || echo "Windows")
+
+# Pick the open command
+if [[ "$OS" == "Darwin" ]]; then
+  OPEN_CMD="open"
+elif [[ "$OS" == "Linux" ]]; then
+  OPEN_CMD="xdg-open"
+else
+  OPEN_CMD="start"
+fi
+
+# URL-encode the JSON pattern and launch
+$OPEN_CMD "glimtapp-io://start-breathing?pattern=${URL_ENCODED_JSON}"
 ```
 
-Example: 
+Example using the `default` preset:
 
 ```bash
-open-link-cmd 'glimtapp-io://start-breathing?pattern=%7B%22countdown_seconds%22%3A2%2C%22inhale%22%3A20%2C%22exhale%22%3A5%2C%22hold_in%22%3A0%2C%22hold_out%22%3A0%2C%22rounds%22%3A8%2C%22preset_id%22%3A%22custom%22%7D'
+open 'glimtapp-io://start-breathing?pattern=%7B%22preset_id%22%3A%22default%22%2C%22countdown_seconds%22%3A7%2C%22inhale%22%3A5%2C%22hold_in%22%3A0%2C%22exhale%22%3A5%2C%22hold_out%22%3A0%2C%22rounds%22%3A4%7D'
 ```
+
+### 3. Tell the user
+
+After launching, briefly tell the user what you started and why (e.g. *"Launched a 4-round box
+breathing session — take your time, I'll be here."*). Keep it warm, not clinical.
+
+If the app isn't installed or the deep link fails, let the user know and suggest they download Glimt.
+
+---
+
+## Setup
+
+Run setup when:
+- No `## Glimt Configuration` section exists in any CLAUDE.md / AGENT.md file, **or**
+- The `glimt-version` recorded there is older than `$version`
+
+The version of the highest-ranking file takes precedence: Managed > Command line > Local > Project > User.
+
+### Setup steps
+
+**Step 1 — Choose scope**
+
+Ask: *"Where should I save the Glimt configuration — User, Project, or Local scope?"*
+
+| Scope   | File                               |
+|---------|------------------------------------|
+| User    | `~/.claude/CLAUDE.md`              |
+| Project | `<project-root>/CLAUDE.md`         |
+| Local   | `<project-root>/.claude/CLAUDE.md` |
+
+**Step 2 — Configure triggers**
+
+Ask: *"When should I offer or start a breathing session? Describe situations in plain language, or I'll use sensible defaults."*
+
+Defaults (used if the user skips):
+- When you seem stressed, frustrated, or stuck on a hard problem
+- When a long-running task is starting and you have a moment
+- No more than once per hour unless you ask
+
+**Step 3 — Write configuration block**
+
+Add the following to the chosen file, replacing any existing `## Glimt Configuration` block:
+
+```markdown
+## Glimt Configuration
+glimt-version: $version
+
+when-to-use:
+  <USER'S TRIGGERS — or the defaults if skipped>
+```
+
+**Step 4 — Confirm**
+
+Tell the user setup is complete and which file was updated.
+
+---
+
+## Notes
+
+- All timing values are in **seconds**.
+- `countdown_seconds` defaults to `7`; use `3` for quick or urgent sessions.
+- To bump the skill version, update only the frontmatter: `version: &version X.XX` — all
+  `$version` references in this file will automatically reflect the new value.
