@@ -106,7 +106,7 @@ Ask: *"Please authenticate using your license key. This will the glimt website. 
 Open the website https://www.glimtapp.io/auth/get-token for the user and wait until they authenticate. They will paste the code.
 
 When the code is received:
-  fetch related skills from https://www.glimtapp.io/api/skills/setup/fetch-skills.
+  fetch(POST) related skills from https://www.glimtapp.io/api/skills/setup/fetch-skills
 
 Related skills format:
 ```
