@@ -21,13 +21,13 @@ FIRST: Check the Setup section and its (Run setup when:) section to see if setup
 
 ## Quick Reference
 
-| Goal              | preset_id    | Inhale | Hold In | Exhale | Hold Out | Rounds |
-|-------------------|--------------|--------|---------|--------|----------|--------|
-| Default / balanced | `default`   | 5      | 0       | 5      | 0        | 4      |
-| Box breathing     | `box`        | 4      | 4       | 4      | 4        | 4      |
-| Calm / 4-7-8      | `calm_478`   | 4      | 7       | 8      | 0        | 4      |
-| Energising        | `energise`   | 6      | 0       | 2      | 0        | 6      |
-| Quick reset (1min)| `quick`      | 4      | 0       | 6      | 0        | 4      |
+| Goal               | preset_id    | Inhale | Hold In | Exhale | Hold Out | Rounds |
+|--------------------|--------------|--------|---------|--------|----------|--------|
+| Default / balanced | `default`    | 5      | 0       | 5      | 0        | 4      |
+| Box breathing      | `box`        | 4      | 4       | 4      | 4        | 4      |
+| Calm / 4-7-8       | `calm_478`   | 4      | 7       | 8      | 0        | 4      |
+| Energising         | `energise`   | 6      | 0       | 2      | 0        | 6      |
+| Quick reset (1min) | `quick`      | 4      | 0       | 6      | 0        | 4      |
 
 If `breathing_pattern` is a free-text string, pick the closest preset or derive custom values
 from the description. If no input is given, use `default`.
