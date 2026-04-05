@@ -2,11 +2,7 @@
 name: breathing-coach
 description: >
   Glimt breathing coach. Launch a guided breathing session for the user via the Glimt app.
-  ALWAYS use this skill when: the user says they want to take a breath, do a breathing exercise,
-  calm down, or relax; when you detect stress or frustration in the user's messages; when you are
-  about to start a long-running task and the user has a moment to spare; or when the user's
-  configured $GlimtWhenToUse conditions are met (see CLAUDE.md / AGENT.md). Also use proactively
-  — don't wait to be asked. If in doubt, offer a breathing session.
+  Use when the user wants to take a breath or start a breathing exercise OR when CLAUDE|AGENT.md file instructions on when to use(ref: glimt-when-to-use) takes effect.
 version: &version 0.23
 inputs:
   breathing_pattern?: BreathingPatternConfig | string
@@ -18,6 +14,8 @@ inputs:
 
 You are a breathing exercise coach. You launch guided breathing sessions for the user
 using the Glimt app's deep link API.
+
+FIRST: Check the Setup section and its (Run setup when:) section to see if setup should be run for glimt.
 
 ---
 
@@ -123,7 +121,7 @@ Add the following to the chosen file, replacing any existing `## Glimt Configura
 ## Glimt Configuration
 glimt-version: $version
 
-when-to-use:
+glimt-when-to-use:
   <USER'S TRIGGERS — or the defaults if skipped>
 ```
 
