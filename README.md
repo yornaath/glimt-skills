@@ -1,5 +1,6 @@
-[<img src="https://www.glimtapp.io/og/x.png"/>](https://www.glimtapp.io?utm_source=github_skill)
+# Status Archived
 
+A better way to integrate is comming very very soon.
 
 ## Glimt Breathwork Coach (SKILL.md)
 
